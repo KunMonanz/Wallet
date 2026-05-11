@@ -9,7 +9,9 @@ class User(models.Model):
     password_hash = fields.CharField(max_length=255)
     created_at = fields.DatetimeField(auto_now_add=True)
     updated_at = fields.DatetimeField(auto_now=True)
-
+    is_email_verified = fields.BooleanField(default=False)
+    is_active = fields.BooleanField(default=False)
+    
     class Meta: # type: ignore
         table = "user"
     

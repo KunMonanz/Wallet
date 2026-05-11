@@ -44,4 +44,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     if user is None:
         logger.error(f"User with ID {user_id} not found")
         raise credentials_exception
+    if not user.is_active:
+        logger.error(f"User with ID {user_id} attempted to use protected endpoint while deactivated")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Account has be deactivated"
+        )
     return user

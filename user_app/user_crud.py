@@ -18,21 +18,21 @@ class UserRepository:
         return user
 
     @staticmethod
-    async def get_user_by_id(user_id: uuid.UUID) -> User:
+    async def get_user_by_id(user_id: uuid.UUID) -> User|None:
         """Get a user by their ID."""
-        user = await User.get(id=user_id)
+        user = await User.get_or_none(id=user_id)
         return user
 
     @staticmethod
-    async def get_user_by_email(email: str) -> User:
+    async def get_user_by_email(email: str) -> User|None:
         """Get a user by their email."""
-        user = await User.get(email=email)
+        user = await User.get_or_none(email=email)
         return user
 
     @staticmethod
-    async def get_user_by_username(username: str) -> User:
+    async def get_user_by_username(username: str) -> User|None:
         """Get a user by their username."""
-        user = await User.get(username=username)
+        user = await User.get_or_none(username=username)
         return user
 
     @staticmethod
