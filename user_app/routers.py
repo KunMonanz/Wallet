@@ -60,7 +60,10 @@ async def login(user_login: UserLogin):
             detail="User not found"
         )
     if not user.is_active:
-        
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Account has be deactivated"
+        )
     if not verify_password(user_login.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
