@@ -21,7 +21,7 @@ class Wallet(models.Model):
     def __str__(self):
         return f"Wallet {self.id} for User {self.user.id} with Balance {self.balance}"
     
-    def calculate_balance(self):
+    async def calculate_balance(self):
         transactions = self.transactions.filter( # type: ignore
             user=self.user, 
             status=Status.COMPLETED
@@ -33,4 +33,5 @@ class Wallet(models.Model):
             elif transaction.type == "debit":
                 balance -= transaction.amount
         self.balance = balance
+        await self.save()
         return self.balance

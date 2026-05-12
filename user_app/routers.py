@@ -23,7 +23,7 @@ from .user_crud import UserRepository
 from .utils.email_utils import decode_email_token
 
 router = APIRouter(
-    prefix="/users/v1",
+    prefix="/api/v1/users",
     tags=["users"],
 )
 
