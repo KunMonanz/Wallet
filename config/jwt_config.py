@@ -11,7 +11,23 @@ ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
 
-def create_access_token(
+async def decode_token(token: str)-> dict[str, str]:
+    if not SECRET_KEY:
+        logger.error("SECRET_KEY is not set in environment variables")
+        raise ValueError("SECRET_KEY is required for JWT token generation")
+
+    if not ALGORITHM:
+        logger.error("ALGORITHM is not set in environment variables")
+        raise ValueError("ALGORITHM is required for JWT token generation")
+
+    if not ACCESS_TOKEN_EXPIRE_MINUTES:
+        logger.error("ACCESS_TOKEN_EXPIRE_MINUTES is not set in environment variables")
+        raise ValueError("ACCESS_TOKEN_EXPIRE_MINUTES is required for JWT token generation")
+    
+    return jwt.decode(token,SECRET_KEY, algorithms=[ALGORITHM])
+    
+
+async def create_access_token(
     data: dict, 
     expires_delta: Optional[timedelta] = None
 ) -> str:

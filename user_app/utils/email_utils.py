@@ -1,5 +1,6 @@
 import os
-from jose import jwt, JWTError
+from fastapi import HTTPException, status
+from jose import jwt, JWTError, ExpiredSignatureError
 from datetime import datetime, timedelta
 from typing import Optional
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, NameEmail
@@ -57,16 +58,29 @@ async def send_email_verification(email: NameEmail, token: str) -> None:
     
 async def decode_email_token(token: str) -> str:
     """Function to decode email verification token and return the user email"""
+    
     if not EMAIL_VERIFICATION_SECRET_KEY:
         raise ValueError("EMAIL_VERIFICATION_SECRET_KEY is required for email verification token generation")
     
     if not ALGORITHM:
         raise ValueError("ALGORITHM is required for email verification token generation")
     
-    payload = jwt.decode(
-        token,
-        EMAIL_VERIFICATION_SECRET_KEY,
-        algorithms=[ALGORITHM]
-    )
+    try:
+        payload: dict[str, str] = jwt.decode(
+            token,
+            EMAIL_VERIFICATION_SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+        if payload.get("sub") is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid token"
+            )
+        return payload.get("sub") # type: ignore
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired"
+        )
+
     
-    return payload["sub"]

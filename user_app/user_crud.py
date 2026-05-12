@@ -1,5 +1,6 @@
 import uuid
 
+from models.blacklist_token import BlackListedToken
 from models.users import User
 from config.password_config import hash_password, verify_password
 
@@ -52,3 +53,7 @@ class UserRepository:
     async def delete_user(user_id: uuid.UUID) -> None:
         """Delete a user by their ID."""
         await User.filter(id=user_id).delete()
+    
+    @staticmethod
+    async def blacklist_token(jti: str):
+        await BlackListedToken.create(jti=jti)
